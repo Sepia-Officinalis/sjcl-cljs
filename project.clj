@@ -1,10 +1,4 @@
-(require '[clojure.java.shell :refer [sh]])
-
-(def +version+
-  "Get the version number from git"
-  (-> (sh "git" "describe" "--tags" "--always") :out clojure.string/trim))
-
-(defproject sjcl-cljs +version+
+(defproject sjcl-cljs "0.1.1"
   :description "ClojureScript wrapper around the Stanford Javascript Crypto Library"
   :url "https://github.com/xcthulhu/sjcl-cljs"
   :license {:name "GPL2"

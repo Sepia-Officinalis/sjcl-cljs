@@ -1,15 +1,4 @@
-/** @fileOverview Javascript cryptography implementation.
- *
- * Crush to remove comments, shorten variable names and
- * generally reduce transmission size.
- *
- * @author Emily Stark
- * @author Mike Hamburg
- * @author Dan Boneh
- */
-
 "use strict";
-/*jslint indent: 2, bitwise: false, nomen: false, plusplus: false, white: false, regexp: false */
 /*global document, window, escape, unescape, module, require, Uint32Array */
 
 /** @namespace The Stanford Javascript Crypto Library, top-level namespace. */
@@ -126,7 +115,7 @@ sjcl.bitArray = {
      * Make a partial word for a bit array.
      * @param {Number} len The number of bits in the word.
      * @param {Number} x The bits.
-     * @param {Number} [0] _end Pass 1 if x has already been shifted to the high side.
+     * @param {Number} [_end=0] _end Pass 1 if x has already been shifted to the high side.
      * @return {Number} The partial word.
      */
     partial: function(len, x, _end) {},
@@ -344,7 +333,7 @@ sjcl.mode.ccm = {
      * @param {bitArray} plaintext The plaintext data.
      * @param {bitArray} iv The initialization value.
      * @param {bitArray} [adata=[]] The authenticated data.
-     * @param {Number} [tlen=64] the desired tag length, in bits.
+     * @param {Number} [tlen=64] The desired tag length, in bits.
      * @return {bitArray} The encrypted data, an array of bytes.
      */
     encrypt: function(prf, plaintext, iv, adata, tlen) {},
@@ -354,8 +343,8 @@ sjcl.mode.ccm = {
      * @param {Object} prf The pseudorandom function.  It must have a block size of 16 bytes.
      * @param {bitArray} ciphertext The ciphertext data.
      * @param {bitArray} iv The initialization value.
-     * @param {bitArray} [[]] adata The authenticated data.
-     * @param {Number} [64] tlen the desired tag length, in bits.
+     * @param {bitArray} [adata=[]] The authenticated data.
+     * @param {Number} [tlen=64] The desired tag length, in bits.
      * @return {bitArray} The decrypted data.
      */
     decrypt: function(prf, ciphertext, iv, adata, tlen) {}
@@ -459,7 +448,7 @@ sjcl.mode.ocb2 = {
      * @param {bitArray} ciphertext The ciphertext data.
      * @param {bitArray} iv The initialization value.
      * @param {bitArray} [adata=[]] The authenticated data.
-     * @param {Number} [tlen=64] the desired tag length, in bits.
+     * @param {Number} [tlen=64] The desired tag length, in bits.
      * @param {boolean} [premac=false] true if the authentication data is pre-macced with PMAC.
      * @return The decrypted data, an array of bytes.
      * @throws {sjcl.exception.invalid} if the IV isn't exactly 128 bits.
@@ -582,15 +571,6 @@ sjcl.misc.scrypt.reverse = function(words) {};
 sjcl.misc.scrypt.blockcopy = function(S, Si, D, Di, len) {};
 sjcl.misc.scrypt.blockxor = function(S, Si, D, Di, len) {};
 
-/** @fileOverview Random number generator.
- *
- * @author Emily Stark
- * @author Mike Hamburg
- * @author Dan Boneh
- * @author Michael Brooks
- * @author Steve Thomas
- */
-
 /** @constructor
  * @class Random number generator
  */
@@ -624,13 +604,6 @@ sjcl.prng.prototype = {
  * @see sjcl.prng
  */
 sjcl.random = new sjcl.prng(6);
-
-/** @fileOverview Convenince functions centered around JSON encapsulation.
- *
- * @author Emily Stark
- * @author Mike Hamburg
- * @author Dan Boneh
- */
 
 /** @namespace JSON encapsulation */
 sjcl.json = {
@@ -921,13 +894,20 @@ sjcl.ecc.pointJac.prototype = {
 
 /**
  * @constructor
+ * @struct
  * @param {bigInt} Field The prime modulus.
  * @param {bigInt} r The prime order of the curve.
  * @param {bigInt} a The constant a in the equation of the curve y^2 = x^3 + ax + b (for NIST curves, a is always -3).
  * @param {bigInt} x The x coordinate of a base point of the curve.
  * @param {bigInt} y The y coordinate of a base point of the curve.
  */
-sjcl.ecc.curve = function(Field, r, a, b, x, y) {};
+sjcl.ecc.curve = function(Field, r, a, b, x, y) {
+    this.field = function () {};
+    this.r = {};
+    this.a = {};
+    this.b = {};
+    this.G = {};
+};
 
 sjcl.ecc.curve.prototype.fromBits = function(bits) {};
 
@@ -1096,17 +1076,6 @@ sjcl.ecc.ecdsa.secretKey.prototype = {
         return "ecdsa";
     }
 };
-/** @fileOverview Javascript SRP implementation.
- *
- * This file contains a partial implementation of the SRP (Secure Remote
- * Password) password-authenticated key exchange protocol. Given a user
- * identity, salt, and SRP group, it generates the SRP verifier that may
- * be sent to a remote server to establish and SRP account.
- *
- * For more information, see http://srp.stanford.edu/.
- *
- * @author Quinn Slack
- */
 
 /**
  * Compute the SRP verifier from the username, password, salt, and group.
@@ -1142,10 +1111,6 @@ sjcl.keyexchange.srp = {
      */
     knownGroup: function(i) {}
 };
-/** @fileOverview Really fast & small implementation of CCM using JS' array buffers
- *
- * @author Marco Munizaga
- */
 
 /** @namespace CTR mode with CBC MAC. */
 
@@ -1165,7 +1130,7 @@ sjcl.arrayBuffer.ccm = {
      * @param {bitArray} plaintext The plaintext data.
      * @param {bitArray} iv The initialization value.
      * @param {bitArray} [adata=[]] The authenticated data.
-     * @param {Number} [tlen=64] the desired tag length, in bits.
+     * @param {Number} [tlen=64] The desired tag length, in bits.
      * @return {bitArray} The encrypted data, an array of bytes.
      */
     compat_encrypt: function(prf, plaintext, iv, adata, tlen) {},
@@ -1175,8 +1140,8 @@ sjcl.arrayBuffer.ccm = {
      * @param {Object} prf The pseudorandom function.  It must have a block size of 16 bytes.
      * @param {bitArray} ciphertext The ciphertext data.
      * @param {bitArray} iv The initialization value.
-     * @param {bitArray} [[]] adata The authenticated data.
-     * @param {Number} [64] tlen the desired tag length, in bits.
+     * @param {bitArray} [adata=[]] The authenticated data.
+     * @param {Number} [tlen=64] The desired tag length, in bits.
      * @return {bitArray} The decrypted data.
      */
     compat_decrypt: function(prf, ciphertext, iv, adata, tlen) {},
@@ -1221,15 +1186,6 @@ sjcl.codec.arrayBuffer = {
     hexDumpBuffer: function(buffer) {}
 };
 
-/** @fileOverview Javascript RIPEMD-160 implementation.
- *
- * @author Artem S Vybornov <vybornov@gmail.com>
- */
-/**
- * Context for a RIPEMD-160 operation in progress.
- * @constructor
- * @class RIPEMD, 160 bits.
- */
 sjcl.hash.ripemd160 = function(hash) {};
 
 /**
