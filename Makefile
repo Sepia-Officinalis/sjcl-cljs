@@ -8,8 +8,6 @@ src/sjcl/%.js: build/%.js
 # TODO: Make sure tests pass, fail o/w
 build/sjcl.js: build/sjcl/core.js build/closure.jar
 	java -jar build/closure.jar \
-             --language_in=ECMASCRIPT5_STRICT \
-             --language_out=ECMASCRIPT5_STRICT \
              --compilation_level=SIMPLE_OPTIMIZATIONS \
 	     --formatting=pretty_print \
 	     --externs src/sjcl/externs/sjcl.js \
@@ -21,8 +19,6 @@ build/sjcl.js: build/sjcl/core.js build/closure.jar
 # TODO: Make sure tests pass, fail o/w
 build/sjcl.min.js: build/sjcl.js build/closure.jar
 	java -jar build/closure.jar \
-             --language_in=ECMASCRIPT5_STRICT \
-             --language_out=ECMASCRIPT5_STRICT \
              --compilation_level=ADVANCED_OPTIMIZATIONS \
 	     --externs src/sjcl/externs/sjcl.js \
 	     --js $< \
