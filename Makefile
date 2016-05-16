@@ -29,6 +29,7 @@ build/sjcl.min.js: build/sjcl.js build/closure.jar
 build/sjcl:
 	mkdir -p build
 	[ -d $@ ] || git clone https://github.com/bitwiseshiftleft/sjcl.git $@
+	(cd $@ ; git checkout acba6e4c64f8f69d1db2ed47fb68622d4322c0da)
 	touch $@
 
 build/sjcl/core.js: build/sjcl

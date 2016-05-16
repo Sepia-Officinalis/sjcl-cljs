@@ -48,13 +48,13 @@ sjcl.cipher.aes.prototype = {encrypt:function(a) {
 }, decrypt:function(a) {
   return this._crypt(a, 1);
 }, _tables:[[[], [], [], [], []], [[], [], [], [], []]], _precompute:function() {
-  var a = this._tables[0], b = this._tables[1], c = a[4], d = b[4], e, f, g, h = [], k = [], m, l, n, p;
+  var a = this._tables[0], b = this._tables[1], c = a[4], d = b[4], e, f, g, h = [], k = [], m, l, n, q;
   for (e = 0;256 > e;e++) {
     k[(h[e] = e << 1 ^ 283 * (e >> 7)) ^ e] = e;
   }
   for (f = g = 0;!c[f];f ^= m || 1, g = k[g] || 1) {
-    for (n = g ^ g << 1 ^ g << 2 ^ g << 3 ^ g << 4, n = n >> 8 ^ n & 255 ^ 99, c[f] = n, d[n] = f, l = h[e = h[m = h[f]]], p = 16843009 * l ^ 65537 * e ^ 257 * m ^ 16843008 * f, l = 257 * h[n] ^ 16843008 * n, e = 0;4 > e;e++) {
-      a[e][f] = l = l << 24 ^ l >>> 8, b[e][n] = p = p << 24 ^ p >>> 8;
+    for (n = g ^ g << 1 ^ g << 2 ^ g << 3 ^ g << 4, n = n >> 8 ^ n & 255 ^ 99, c[f] = n, d[n] = f, l = h[e = h[m = h[f]]], q = 16843009 * l ^ 65537 * e ^ 257 * m ^ 16843008 * f, l = 257 * h[n] ^ 16843008 * n, e = 0;4 > e;e++) {
+      a[e][f] = l = l << 24 ^ l >>> 8, b[e][n] = q = q << 24 ^ q >>> 8;
     }
   }
   for (e = 0;5 > e;e++) {
@@ -64,16 +64,16 @@ sjcl.cipher.aes.prototype = {encrypt:function(a) {
   if (4 !== a.length) {
     throw new sjcl.exception.invalid("invalid aes block size");
   }
-  var c = this._key[b], d = a[0] ^ c[0], e = a[b ? 3 : 1] ^ c[1], f = a[2] ^ c[2], g = a[b ? 1 : 3] ^ c[3], h, k, m, l = c.length / 4 - 2, n, p = 4, r = [0, 0, 0, 0];
+  var c = this._key[b], d = a[0] ^ c[0], e = a[b ? 3 : 1] ^ c[1], f = a[2] ^ c[2], g = a[b ? 1 : 3] ^ c[3], h, k, m, l = c.length / 4 - 2, n, q = 4, u = [0, 0, 0, 0];
   h = this._tables[b];
-  var t = h[0], H = h[1], G = h[2], x = h[3], y = h[4];
+  var v = h[0], G = h[1], H = h[2], w = h[3], A = h[4];
   for (n = 0;n < l;n++) {
-    h = t[d >>> 24] ^ H[e >> 16 & 255] ^ G[f >> 8 & 255] ^ x[g & 255] ^ c[p], k = t[e >>> 24] ^ H[f >> 16 & 255] ^ G[g >> 8 & 255] ^ x[d & 255] ^ c[p + 1], m = t[f >>> 24] ^ H[g >> 16 & 255] ^ G[d >> 8 & 255] ^ x[e & 255] ^ c[p + 2], g = t[g >>> 24] ^ H[d >> 16 & 255] ^ G[e >> 8 & 255] ^ x[f & 255] ^ c[p + 3], p += 4, d = h, e = k, f = m;
+    h = v[d >>> 24] ^ G[e >> 16 & 255] ^ H[f >> 8 & 255] ^ w[g & 255] ^ c[q], k = v[e >>> 24] ^ G[f >> 16 & 255] ^ H[g >> 8 & 255] ^ w[d & 255] ^ c[q + 1], m = v[f >>> 24] ^ G[g >> 16 & 255] ^ H[d >> 8 & 255] ^ w[e & 255] ^ c[q + 2], g = v[g >>> 24] ^ G[d >> 16 & 255] ^ H[e >> 8 & 255] ^ w[f & 255] ^ c[q + 3], q += 4, d = h, e = k, f = m;
   }
   for (n = 0;4 > n;n++) {
-    r[b ? 3 & -n : n] = y[d >>> 24] << 24 ^ y[e >> 16 & 255] << 16 ^ y[f >> 8 & 255] << 8 ^ y[g & 255] ^ c[p++], h = d, d = e, e = f, f = g, g = h;
+    u[b ? 3 & -n : n] = A[d >>> 24] << 24 ^ A[e >> 16 & 255] << 16 ^ A[f >> 8 & 255] << 8 ^ A[g & 255] ^ c[q++], h = d, d = e, e = f, f = g, g = h;
   }
-  return r;
+  return u;
 }};
 sjcl.bitArray = {bitSlice:function(a, b, c) {
   a = sjcl.bitArray._shiftRight(a.slice(b / 32), 32 - (b & 31)).slice(1);
@@ -188,7 +188,7 @@ sjcl.codec.base32 = {_chars:"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", _hexChars:"01234
       if (!b) {
         try {
           return sjcl.codec.base32hex.toBits(a);
-        } catch (p) {
+        } catch (q) {
         }
       }
       throw new sjcl.exception.invalid("this isn't " + n + "!");
@@ -263,16 +263,8 @@ sjcl.hash.sha256.prototype = {blockSize:512, reset:function() {
   var b, c = this._buffer = sjcl.bitArray.concat(this._buffer, a);
   b = this._length;
   a = this._length = b + sjcl.bitArray.bitLength(a);
-  if ("undefined" !== typeof Uint32Array) {
-    var d = new Uint32Array(c), e = 0;
-    for (b = 512 + b & -512;b <= a;b += 512) {
-      this._block(d.subarray(16 * e, 16 * (e + 1))), e += 1;
-    }
-    c.splice(0, 16 * e);
-  } else {
-    for (b = 512 + b & -512;b <= a;b += 512) {
-      this._block(c.splice(0, 16));
-    }
+  for (b = 512 + b & -512;b <= a;b += 512) {
+    this._block(c.splice(0, 16));
   }
   return this;
 }, finalize:function() {
@@ -302,9 +294,9 @@ sjcl.hash.sha256.prototype = {blockSize:512, reset:function() {
     b++;
   }
 }, _block:function(a) {
-  var b, c, d, e = this._h, f = this._key, g = e[0], h = e[1], k = e[2], m = e[3], l = e[4], n = e[5], p = e[6], r = e[7];
-  for (b = 0;64 > b;b++) {
-    16 > b ? c = a[b] : (c = a[b + 1 & 15], d = a[b + 14 & 15], c = a[b & 15] = (c >>> 7 ^ c >>> 18 ^ c >>> 3 ^ c << 25 ^ c << 14) + (d >>> 17 ^ d >>> 19 ^ d >>> 10 ^ d << 15 ^ d << 13) + a[b & 15] + a[b + 9 & 15] | 0), c = c + r + (l >>> 6 ^ l >>> 11 ^ l >>> 25 ^ l << 26 ^ l << 21 ^ l << 7) + (p ^ l & (n ^ p)) + f[b], r = p, p = n, n = l, l = m + c | 0, m = k, k = h, h = g, g = c + (h & k ^ m & (h ^ k)) + (h >>> 2 ^ h >>> 13 ^ h >>> 22 ^ h << 30 ^ h << 19 ^ h << 10) | 0;
+  var b, c, d = a.slice(0), e = this._h, f = this._key, g = e[0], h = e[1], k = e[2], m = e[3], l = e[4], n = e[5], q = e[6], u = e[7];
+  for (a = 0;64 > a;a++) {
+    16 > a ? b = d[a] : (b = d[a + 1 & 15], c = d[a + 14 & 15], b = d[a & 15] = (b >>> 7 ^ b >>> 18 ^ b >>> 3 ^ b << 25 ^ b << 14) + (c >>> 17 ^ c >>> 19 ^ c >>> 10 ^ c << 15 ^ c << 13) + d[a & 15] + d[a + 9 & 15] | 0), b = b + u + (l >>> 6 ^ l >>> 11 ^ l >>> 25 ^ l << 26 ^ l << 21 ^ l << 7) + (q ^ l & (n ^ q)) + f[a], u = q, q = n, n = l, l = m + b | 0, m = k, k = h, h = g, g = b + (h & k ^ m & (h ^ k)) + (h >>> 2 ^ h >>> 13 ^ h >>> 22 ^ h << 30 ^ h << 19 ^ h << 10) | 0;
   }
   e[0] = e[0] + g | 0;
   e[1] = e[1] + h | 0;
@@ -312,8 +304,8 @@ sjcl.hash.sha256.prototype = {blockSize:512, reset:function() {
   e[3] = e[3] + m | 0;
   e[4] = e[4] + l | 0;
   e[5] = e[5] + n | 0;
-  e[6] = e[6] + p | 0;
-  e[7] = e[7] + r | 0;
+  e[6] = e[6] + q | 0;
+  e[7] = e[7] + u | 0;
 }};
 sjcl.hash.sha512 = function(a) {
   this._key[0] || this._precompute();
@@ -332,16 +324,8 @@ sjcl.hash.sha512.prototype = {blockSize:1024, reset:function() {
   var b, c = this._buffer = sjcl.bitArray.concat(this._buffer, a);
   b = this._length;
   a = this._length = b + sjcl.bitArray.bitLength(a);
-  if ("undefined" !== typeof Uint32Array) {
-    var d = new Uint32Array(c), e = 0;
-    for (b = 1024 + b & -1024;b <= a;b += 1024) {
-      this._block(d.subarray(32 * e, 32 * (e + 1))), e += 1;
-    }
-    c.splice(0, 32 * e);
-  } else {
-    for (b = 1024 + b & -1024;b <= a;b += 1024) {
-      this._block(c.splice(0, 32));
-    }
+  for (b = 1024 + b & -1024;b <= a;b += 1024) {
+    this._block(c.splice(0, 32));
   }
   return this;
 }, finalize:function() {
@@ -378,37 +362,28 @@ sjcl.hash.sha512.prototype = {blockSize:1024, reset:function() {
     c++;
   }
 }, _block:function(a) {
-  var b, c, d = this._h, e = this._key, f = d[0], g = d[1], h = d[2], k = d[3], m = d[4], l = d[5], n = d[6], p = d[7], r = d[8], t = d[9], H = d[10], G = d[11], x = d[12], y = d[13], B = d[14], z = d[15], u;
-  if ("undefined" !== typeof Uint32Array) {
-    u = Array(160);
-    for (var v = 0;32 > v;v++) {
-      u[v] = a[v];
-    }
-  } else {
-    u = a;
-  }
-  var v = f, q = g, w = h, I = k, K = m, J = l, S = n, L = p, D = r, C = t, Q = H, M = G, R = x, N = y, T = B, O = z;
+  var b, c, d = a.slice(0), e = this._h, f = this._key, g = e[0], h = e[1], k = e[2], m = e[3], l = e[4], n = e[5], q = e[6], u = e[7], v = e[8], G = e[9], H = e[10], w = e[11], A = e[12], x = e[13], B = e[14], y = e[15], r = g, p = h, t = k, I = m, K = l, J = n, S = q, L = u, D = v, C = G, Q = H, M = w, R = A, N = x, T = B, O = y;
   for (a = 0;80 > a;a++) {
     if (16 > a) {
-      b = u[2 * a], c = u[2 * a + 1];
+      b = d[2 * a], c = d[2 * a + 1];
     } else {
-      c = u[2 * (a - 15)];
-      var A = u[2 * (a - 15) + 1];
-      b = (A << 31 | c >>> 1) ^ (A << 24 | c >>> 8) ^ c >>> 7;
-      var E = (c << 31 | A >>> 1) ^ (c << 24 | A >>> 8) ^ (c << 25 | A >>> 7);
-      c = u[2 * (a - 2)];
-      var F = u[2 * (a - 2) + 1], A = (F << 13 | c >>> 19) ^ (c << 3 | F >>> 29) ^ c >>> 6, F = (c << 13 | F >>> 19) ^ (F << 3 | c >>> 29) ^ (c << 26 | F >>> 6), U = u[2 * (a - 7)], V = u[2 * (a - 16)], P = u[2 * (a - 16) + 1];
-      c = E + u[2 * (a - 7) + 1];
+      c = d[2 * (a - 15)];
+      var z = d[2 * (a - 15) + 1];
+      b = (z << 31 | c >>> 1) ^ (z << 24 | c >>> 8) ^ c >>> 7;
+      var E = (c << 31 | z >>> 1) ^ (c << 24 | z >>> 8) ^ (c << 25 | z >>> 7);
+      c = d[2 * (a - 2)];
+      var F = d[2 * (a - 2) + 1], z = (F << 13 | c >>> 19) ^ (c << 3 | F >>> 29) ^ c >>> 6, F = (c << 13 | F >>> 19) ^ (F << 3 | c >>> 29) ^ (c << 26 | F >>> 6), U = d[2 * (a - 7)], V = d[2 * (a - 16)], P = d[2 * (a - 16) + 1];
+      c = E + d[2 * (a - 7) + 1];
       b = b + U + (c >>> 0 < E >>> 0 ? 1 : 0);
       c += F;
-      b += A + (c >>> 0 < F >>> 0 ? 1 : 0);
+      b += z + (c >>> 0 < F >>> 0 ? 1 : 0);
       c += P;
       b += V + (c >>> 0 < P >>> 0 ? 1 : 0);
     }
-    u[2 * a] = b |= 0;
-    u[2 * a + 1] = c |= 0;
-    var U = D & Q ^ ~D & R, W = C & M ^ ~C & N, F = v & w ^ v & K ^ w & K, Y = q & I ^ q & J ^ I & J, V = (q << 4 | v >>> 28) ^ (v << 30 | q >>> 2) ^ (v << 25 | q >>> 7), P = (v << 4 | q >>> 28) ^ (q << 30 | v >>> 2) ^ (q << 25 | v >>> 7), Z = e[2 * a], X = e[2 * a + 1], A = O + ((D << 18 | C >>> 14) ^ (D << 14 | C >>> 18) ^ (C << 23 | D >>> 9)), E = T + ((C << 18 | D >>> 14) ^ (C << 14 | D >>> 18) ^ (D << 23 | C >>> 9)) + (A >>> 0 < O >>> 0 ? 1 : 0), A = A + W, E = E + (U + (A >>> 0 < W >>> 0 ? 
-    1 : 0)), A = A + X, E = E + (Z + (A >>> 0 < X >>> 0 ? 1 : 0)), A = A + c | 0, E = E + (b + (A >>> 0 < c >>> 0 ? 1 : 0));
+    d[2 * a] = b |= 0;
+    d[2 * a + 1] = c |= 0;
+    var U = D & Q ^ ~D & R, W = C & M ^ ~C & N, F = r & t ^ r & K ^ t & K, Y = p & I ^ p & J ^ I & J, V = (p << 4 | r >>> 28) ^ (r << 30 | p >>> 2) ^ (r << 25 | p >>> 7), P = (r << 4 | p >>> 28) ^ (p << 30 | r >>> 2) ^ (p << 25 | r >>> 7), Z = f[2 * a], X = f[2 * a + 1], z = O + ((D << 18 | C >>> 14) ^ (D << 14 | C >>> 18) ^ (C << 23 | D >>> 9)), E = T + ((C << 18 | D >>> 14) ^ (C << 14 | D >>> 18) ^ (D << 23 | C >>> 9)) + (z >>> 0 < O >>> 0 ? 1 : 0), z = z + W, E = E + (U + (z >>> 0 < W >>> 0 ? 
+    1 : 0)), z = z + X, E = E + (Z + (z >>> 0 < X >>> 0 ? 1 : 0)), z = z + c | 0, E = E + (b + (z >>> 0 < c >>> 0 ? 1 : 0));
     c = P + Y;
     b = V + F + (c >>> 0 < P >>> 0 ? 1 : 0);
     T = R;
@@ -417,33 +392,33 @@ sjcl.hash.sha512.prototype = {blockSize:1024, reset:function() {
     N = M;
     Q = D;
     M = C;
-    C = L + A | 0;
+    C = L + z | 0;
     D = S + E + (C >>> 0 < L >>> 0 ? 1 : 0) | 0;
     S = K;
     L = J;
-    K = w;
+    K = t;
     J = I;
-    w = v;
-    I = q;
-    q = A + c | 0;
-    v = E + b + (q >>> 0 < A >>> 0 ? 1 : 0) | 0;
+    t = r;
+    I = p;
+    p = z + c | 0;
+    r = E + b + (p >>> 0 < z >>> 0 ? 1 : 0) | 0;
   }
-  g = d[1] = g + q | 0;
-  d[0] = f + v + (g >>> 0 < q >>> 0 ? 1 : 0) | 0;
-  k = d[3] = k + I | 0;
-  d[2] = h + w + (k >>> 0 < I >>> 0 ? 1 : 0) | 0;
-  l = d[5] = l + J | 0;
-  d[4] = m + K + (l >>> 0 < J >>> 0 ? 1 : 0) | 0;
-  p = d[7] = p + L | 0;
-  d[6] = n + S + (p >>> 0 < L >>> 0 ? 1 : 0) | 0;
-  t = d[9] = t + C | 0;
-  d[8] = r + D + (t >>> 0 < C >>> 0 ? 1 : 0) | 0;
-  G = d[11] = G + M | 0;
-  d[10] = H + Q + (G >>> 0 < M >>> 0 ? 1 : 0) | 0;
-  y = d[13] = y + N | 0;
-  d[12] = x + R + (y >>> 0 < N >>> 0 ? 1 : 0) | 0;
-  z = d[15] = z + O | 0;
-  d[14] = B + T + (z >>> 0 < O >>> 0 ? 1 : 0) | 0;
+  h = e[1] = h + p | 0;
+  e[0] = g + r + (h >>> 0 < p >>> 0 ? 1 : 0) | 0;
+  m = e[3] = m + I | 0;
+  e[2] = k + t + (m >>> 0 < I >>> 0 ? 1 : 0) | 0;
+  n = e[5] = n + J | 0;
+  e[4] = l + K + (n >>> 0 < J >>> 0 ? 1 : 0) | 0;
+  u = e[7] = u + L | 0;
+  e[6] = q + S + (u >>> 0 < L >>> 0 ? 1 : 0) | 0;
+  G = e[9] = G + C | 0;
+  e[8] = v + D + (G >>> 0 < C >>> 0 ? 1 : 0) | 0;
+  w = e[11] = w + M | 0;
+  e[10] = H + Q + (w >>> 0 < M >>> 0 ? 1 : 0) | 0;
+  x = e[13] = x + N | 0;
+  e[12] = A + R + (x >>> 0 < N >>> 0 ? 1 : 0) | 0;
+  y = e[15] = y + O | 0;
+  e[14] = B + T + (y >>> 0 < O >>> 0 ? 1 : 0) | 0;
 }};
 sjcl.hash.sha1 = function(a) {
   a ? (this._h = a._h.slice(0), this._buffer = a._buffer.slice(0), this._length = a._length) : this.reset();
@@ -461,16 +436,8 @@ sjcl.hash.sha1.prototype = {blockSize:512, reset:function() {
   var b, c = this._buffer = sjcl.bitArray.concat(this._buffer, a);
   b = this._length;
   a = this._length = b + sjcl.bitArray.bitLength(a);
-  if ("undefined" !== typeof Uint32Array) {
-    var d = new Uint32Array(c), e = 0;
-    for (b = this.blockSize + b & -this.blockSize;b <= a;b += this.blockSize) {
-      this._block(d.subarray(16 * e, 16 * (e + 1))), e += 1;
-    }
-    c.splice(0, 16 * e);
-  } else {
-    for (b = this.blockSize + b & -this.blockSize;b <= a;b += this.blockSize) {
-      this._block(c.splice(0, 16));
-    }
+  for (b = this.blockSize + b & -this.blockSize;b <= a;b += this.blockSize) {
+    this._block(c.splice(0, 16));
   }
   return this;
 }, finalize:function() {
@@ -500,27 +467,20 @@ sjcl.hash.sha1.prototype = {blockSize:512, reset:function() {
 }, _S:function(a, b) {
   return b << a | b >>> 32 - a;
 }, _block:function(a) {
-  var b, c, d, e, f, g, h = this._h, k;
-  if ("undefined" !== typeof Uint32Array) {
-    for (k = Array(80), b = 0;16 > b;b++) {
-      k[b] = a[b];
-    }
-  } else {
-    k = a;
-  }
-  c = h[0];
-  d = h[1];
-  e = h[2];
-  f = h[3];
-  g = h[4];
+  var b, c, d, e, f, g, h = a.slice(0), k = this._h;
+  c = k[0];
+  d = k[1];
+  e = k[2];
+  f = k[3];
+  g = k[4];
   for (a = 0;79 >= a;a++) {
-    16 <= a && (k[a] = this._S(1, k[a - 3] ^ k[a - 8] ^ k[a - 14] ^ k[a - 16])), b = this._S(5, c) + this._f(a, d, e, f) + g + k[a] + this._key[Math.floor(a / 20)] | 0, g = f, f = e, e = this._S(30, d), d = c, c = b;
+    16 <= a && (h[a] = this._S(1, h[a - 3] ^ h[a - 8] ^ h[a - 14] ^ h[a - 16])), b = this._S(5, c) + this._f(a, d, e, f) + g + h[a] + this._key[Math.floor(a / 20)] | 0, g = f, f = e, e = this._S(30, d), d = c, c = b;
   }
-  h[0] = h[0] + c | 0;
-  h[1] = h[1] + d | 0;
-  h[2] = h[2] + e | 0;
-  h[3] = h[3] + f | 0;
-  h[4] = h[4] + g | 0;
+  k[0] = k[0] + c | 0;
+  k[1] = k[1] + d | 0;
+  k[2] = k[2] + e | 0;
+  k[3] = k[3] + f | 0;
+  k[4] = k[4] + g | 0;
 }};
 sjcl.mode.ccm = {name:"ccm", _progressListeners:[], listenProgress:function(a) {
   sjcl.mode.ccm._progressListeners.push(a);
@@ -604,32 +564,6 @@ sjcl.mode.ccm = {name:"ccm", _progressListeners:[], listenProgress:function(a) {
   return {tag:d, data:h.clamp(b, m)};
 }};
 void 0 === sjcl.beware && (sjcl.beware = {});
-sjcl.beware["CTR mode is dangerous because it doesn't protect message integrity."] = function() {
-  sjcl.mode.ctr = {name:"ctr", encrypt:function(a, b, c, d) {
-    return sjcl.mode.ctr._calculate(a, b, c, d);
-  }, decrypt:function(a, b, c, d) {
-    return sjcl.mode.ctr._calculate(a, b, c, d);
-  }, _calculate:function(a, b, c, d) {
-    var e, f, g;
-    if (d && d.length) {
-      throw new sjcl.exception.invalid("ctr can't authenticate data");
-    }
-    if (128 !== sjcl.bitArray.bitLength(c)) {
-      throw new sjcl.exception.invalid("ctr iv must be 128 bits");
-    }
-    if (!(d = b.length)) {
-      return [];
-    }
-    c = c.slice(0);
-    e = b.slice(0);
-    b = sjcl.bitArray.bitLength(e);
-    for (g = 0;g < d;g += 4) {
-      f = a.encrypt(c), e[g] ^= f[0], e[g + 1] ^= f[1], e[g + 2] ^= f[2], e[g + 3] ^= f[3], c[3]++;
-    }
-    return sjcl.bitArray.clamp(e, b);
-  }};
-};
-void 0 === sjcl.beware && (sjcl.beware = {});
 sjcl.beware["CBC mode is dangerous because it doesn't protect message integrity."] = function() {
   sjcl.mode.cbc = {name:"cbc", encrypt:function(a, b, c, d) {
     if (d && d.length) {
@@ -680,11 +614,11 @@ sjcl.mode.ocb2 = {name:"ocb2", encrypt:function(a, b, c, d, e, f) {
   }
   var g, h = sjcl.mode.ocb2._times2, k = sjcl.bitArray, m = k._xor4, l = [0, 0, 0, 0];
   c = h(a.encrypt(c));
-  var n, p = [];
+  var n, q = [];
   d = d || [];
   e = e || 64;
   for (g = 0;g + 4 < b.length;g += 4) {
-    n = b.slice(g, g + 4), l = m(l, n), p = p.concat(m(c, a.encrypt(m(c, n)))), c = h(c);
+    n = b.slice(g, g + 4), l = m(l, n), q = q.concat(m(c, a.encrypt(m(c, n)))), c = h(c);
   }
   n = b.slice(g);
   b = k.bitLength(n);
@@ -693,27 +627,27 @@ sjcl.mode.ocb2 = {name:"ocb2", encrypt:function(a, b, c, d, e, f) {
   l = m(l, m(n.concat([0, 0, 0]), g));
   l = a.encrypt(m(l, m(c, h(c))));
   d.length && (l = m(l, f ? d : sjcl.mode.ocb2.pmac(a, d)));
-  return p.concat(k.concat(n, k.clamp(l, e)));
+  return q.concat(k.concat(n, k.clamp(l, e)));
 }, decrypt:function(a, b, c, d, e, f) {
   if (128 !== sjcl.bitArray.bitLength(c)) {
     throw new sjcl.exception.invalid("ocb iv must be 128 bits");
   }
   e = e || 64;
-  var g = sjcl.mode.ocb2._times2, h = sjcl.bitArray, k = h._xor4, m = [0, 0, 0, 0], l = g(a.encrypt(c)), n, p, r = sjcl.bitArray.bitLength(b) - e, t = [];
+  var g = sjcl.mode.ocb2._times2, h = sjcl.bitArray, k = h._xor4, m = [0, 0, 0, 0], l = g(a.encrypt(c)), n, q, u = sjcl.bitArray.bitLength(b) - e, v = [];
   d = d || [];
-  for (c = 0;c + 4 < r / 32;c += 4) {
-    n = k(l, a.decrypt(k(l, b.slice(c, c + 4)))), m = k(m, n), t = t.concat(n), l = g(l);
+  for (c = 0;c + 4 < u / 32;c += 4) {
+    n = k(l, a.decrypt(k(l, b.slice(c, c + 4)))), m = k(m, n), v = v.concat(n), l = g(l);
   }
-  p = r - 32 * c;
-  n = a.encrypt(k(l, [0, 0, 0, p]));
-  n = k(n, h.clamp(b.slice(c), p).concat([0, 0, 0]));
+  q = u - 32 * c;
+  n = a.encrypt(k(l, [0, 0, 0, q]));
+  n = k(n, h.clamp(b.slice(c), q).concat([0, 0, 0]));
   m = k(m, n);
   m = a.encrypt(k(m, k(l, g(l))));
   d.length && (m = k(m, f ? d : sjcl.mode.ocb2.pmac(a, d)));
-  if (!h.equal(h.clamp(m, e), h.bitSlice(b, r))) {
+  if (!h.equal(h.clamp(m, e), h.bitSlice(b, u))) {
     throw new sjcl.exception.corrupt("ocb: tag doesn't match");
   }
-  return t.concat(h.clamp(n, p));
+  return v.concat(h.clamp(n, q));
 }, pmac:function(a, b) {
   var c, d = sjcl.mode.ocb2._times2, e = sjcl.bitArray, f = e._xor4, g = [0, 0, 0, 0], h = a.encrypt([0, 0, 0, 0]), h = f(h, d(d(h)));
   for (c = 0;c + 4 < b.length;c += 4) {
@@ -725,66 +659,6 @@ sjcl.mode.ocb2 = {name:"ocb2", encrypt:function(a, b, c, d, e, f) {
   return a.encrypt(f(d(f(h, d(h))), g));
 }, _times2:function(a) {
   return [a[0] << 1 ^ a[1] >>> 31, a[1] << 1 ^ a[2] >>> 31, a[2] << 1 ^ a[3] >>> 31, a[3] << 1 ^ 135 * (a[0] >>> 31)];
-}};
-sjcl.mode.ocb2progressive = {createEncryptor:function(a, b, c, d, e) {
-  if (128 !== sjcl.bitArray.bitLength(b)) {
-    throw new sjcl.exception.invalid("ocb iv must be 128 bits");
-  }
-  var f, g = sjcl.mode.ocb2._times2, h = sjcl.bitArray, k = h._xor4, m = [0, 0, 0, 0], l = g(a.encrypt(b)), n, p, r = [], t;
-  c = c || [];
-  d = d || 64;
-  return {process:function(b) {
-    if (0 == sjcl.bitArray.bitLength(b)) {
-      return [];
-    }
-    var c = [];
-    r = r.concat(b);
-    for (f = 0;f + 4 < r.length;f += 4) {
-      n = r.slice(f, f + 4), m = k(m, n), c = c.concat(k(l, a.encrypt(k(l, n)))), l = g(l);
-    }
-    r = r.slice(f);
-    return c;
-  }, finalize:function() {
-    n = r;
-    p = h.bitLength(n);
-    t = a.encrypt(k(l, [0, 0, 0, p]));
-    n = h.clamp(k(n.concat([0, 0, 0]), t), p);
-    m = k(m, k(n.concat([0, 0, 0]), t));
-    m = a.encrypt(k(m, k(l, g(l))));
-    c.length && (m = k(m, e ? c : sjcl.mode.ocb2.pmac(a, c)));
-    return h.concat(n, h.clamp(m, d));
-  }};
-}, createDecryptor:function(a, b, c, d, e) {
-  if (128 !== sjcl.bitArray.bitLength(b)) {
-    throw new sjcl.exception.invalid("ocb iv must be 128 bits");
-  }
-  d = d || 64;
-  var f, g = sjcl.mode.ocb2._times2, h = sjcl.bitArray, k = h._xor4, m = [0, 0, 0, 0], l = g(a.encrypt(b)), n, p, r = [], t;
-  c = c || [];
-  return {process:function(b) {
-    if (0 == b.length) {
-      return [];
-    }
-    var c = [];
-    r = r.concat(b);
-    b = sjcl.bitArray.bitLength(r);
-    for (f = 0;f + 4 < (b - d) / 32;f += 4) {
-      n = k(l, a.decrypt(k(l, r.slice(f, f + 4)))), m = k(m, n), c = c.concat(n), l = g(l);
-    }
-    r = r.slice(f);
-    return c;
-  }, finalize:function() {
-    p = sjcl.bitArray.bitLength(r) - d;
-    t = a.encrypt(k(l, [0, 0, 0, p]));
-    n = k(t, h.clamp(r, p).concat([0, 0, 0]));
-    m = k(m, n);
-    m = a.encrypt(k(m, k(l, g(l))));
-    c.length && (m = k(m, e ? c : sjcl.mode.ocb2.pmac(a, c)));
-    if (!h.equal(h.clamp(m, d), h.bitSlice(r, p))) {
-      throw new sjcl.exception.corrupt("ocb: tag doesn't match");
-    }
-    return h.clamp(n, p);
-  }};
 }};
 sjcl.mode.gcm = {name:"gcm", encrypt:function(a, b, c, d, e) {
   var f = b.slice(0);
@@ -824,13 +698,13 @@ sjcl.mode.gcm = {name:"gcm", encrypt:function(a, b, c, d, e) {
   }
   return b;
 }, _ctrMode:function(a, b, c, d, e, f) {
-  var g, h, k, m, l, n, p, r, t = sjcl.bitArray;
+  var g, h, k, m, l, n, q, u, v = sjcl.bitArray;
   n = c.length;
-  p = t.bitLength(c);
-  r = t.bitLength(d);
-  h = t.bitLength(e);
+  q = v.bitLength(c);
+  u = v.bitLength(d);
+  h = v.bitLength(e);
   g = b.encrypt([0, 0, 0, 0]);
-  96 === h ? (e = e.slice(0), e = t.concat(e, [1])) : (e = sjcl.mode.gcm._ghash(g, [0, 0, 0, 0], e), e = sjcl.mode.gcm._ghash(g, e, [0, 0, Math.floor(h / 4294967296), h & 4294967295]));
+  96 === h ? (e = e.slice(0), e = v.concat(e, [1])) : (e = sjcl.mode.gcm._ghash(g, [0, 0, 0, 0], e), e = sjcl.mode.gcm._ghash(g, e, [0, 0, Math.floor(h / 4294967296), h & 4294967295]));
   d = sjcl.mode.gcm._ghash(g, [0, 0, 0, 0], d);
   m = e.slice(0);
   l = d.slice(0);
@@ -838,15 +712,15 @@ sjcl.mode.gcm = {name:"gcm", encrypt:function(a, b, c, d, e) {
   for (k = 0;k < n;k += 4) {
     m[3]++, h = b.encrypt(m), c[k] ^= h[0], c[k + 1] ^= h[1], c[k + 2] ^= h[2], c[k + 3] ^= h[3];
   }
-  c = t.clamp(c, p);
+  c = v.clamp(c, q);
   a && (l = sjcl.mode.gcm._ghash(g, d, c));
-  l = sjcl.mode.gcm._ghash(g, l, [Math.floor(r / 4294967296), r & 4294967295, Math.floor(p / 4294967296), p & 4294967295]);
+  l = sjcl.mode.gcm._ghash(g, l, [Math.floor(u / 4294967296), u & 4294967295, Math.floor(q / 4294967296), q & 4294967295]);
   h = b.encrypt(e);
   l[0] ^= h[0];
   l[1] ^= h[1];
   l[2] ^= h[2];
   l[3] ^= h[3];
-  return {tag:t.bitSlice(l, 0, f), data:c};
+  return {tag:v.bitSlice(l, 0, f), data:c};
 }};
 sjcl.misc.hmac = function(a, b) {
   this._hash = b = b || sjcl.hash.sha256;
@@ -1137,23 +1011,23 @@ sjcl.prng.prototype = {randomWords:function(a, b) {
   } catch (d) {
     c = b = 0;
   }
-  0 != b && 0 != c && this.addEntropy([b, c], 2, "mouse");
+  0 != b && 0 != c && sjcl.random.addEntropy([b, c], 2, "mouse");
   this._addCurrentTimeToEntropy(0);
 }, _touchCollector:function(a) {
   a = a.touches[0] || a.changedTouches[0];
-  this.addEntropy([a.pageX || a.clientX, a.pageY || a.clientY], 1, "touch");
+  sjcl.random.addEntropy([a.pageX || a.clientX, a.pageY || a.clientY], 1, "touch");
   this._addCurrentTimeToEntropy(0);
 }, _loadTimeCollector:function() {
   this._addCurrentTimeToEntropy(2);
 }, _addCurrentTimeToEntropy:function(a) {
-  "undefined" !== typeof window && window.performance && "function" === typeof window.performance.now ? this.addEntropy(window.performance.now(), a, "loadtime") : this.addEntropy((new Date).valueOf(), a, "loadtime");
+  "undefined" !== typeof window && window.performance && "function" === typeof window.performance.now ? sjcl.random.addEntropy(window.performance.now(), a, "loadtime") : sjcl.random.addEntropy((new Date).valueOf(), a, "loadtime");
 }, _accelerometerCollector:function(a) {
   a = a.accelerationIncludingGravity.x || a.accelerationIncludingGravity.y || a.accelerationIncludingGravity.z;
   if (window.orientation) {
     var b = window.orientation;
-    "number" === typeof b && this.addEntropy(b, 1, "accelerometer");
+    "number" === typeof b && sjcl.random.addEntropy(b, 1, "accelerometer");
   }
-  a && this.addEntropy(a, 2, "accelerometer");
+  a && sjcl.random.addEntropy(a, 2, "accelerometer");
   this._addCurrentTimeToEntropy(0);
 }, _fireEvent:function(a, b) {
   var c, d = sjcl.random._callbacks[a], e = [];
@@ -1513,8 +1387,8 @@ sjcl.bn.prototype = {radix:24, maxMul:8, _class:sjcl.bn, copy:function() {
   k = 18 > k ? 1 : 48 > k ? 3 : 144 > k ? 4 : 768 > k ? 5 : 6;
   var m = g.copy();
   d = b.copy();
-  for (var l = new sjcl.bn(1), n = new sjcl.bn(0), p = g.copy();p.greaterEquals(1);) {
-    p.halveM(), 0 == (l.limbs[0] & 1) ? (l.halveM(), n.halveM()) : (l.addM(d), l.halveM(), n.halveM(), n.addM(m));
+  for (var l = new sjcl.bn(1), n = new sjcl.bn(0), q = g.copy();q.greaterEquals(1);) {
+    q.halveM(), 0 == (l.limbs[0] & 1) ? (l.halveM(), n.halveM()) : (l.addM(d), l.halveM(), n.halveM(), n.addM(m));
   }
   l = l.normalize();
   n = n.normalize();
@@ -1547,23 +1421,23 @@ sjcl.bn.prototype = {radix:24, maxMul:8, _class:sjcl.bn, copy:function() {
   for (c = 1;c <= d;c++) {
     l[2 * c + 1] = m(l[2 * c - 1], l[2]);
   }
-  p = function(a, b) {
+  q = function(a, b) {
     var c = b % a.radix;
     return (a.limbs[Math.floor(b / a.radix)] & 1 << c) >> c;
   };
   for (c = a.bitLength() - 1;0 <= c;) {
-    if (0 == p(a, c)) {
+    if (0 == q(a, c)) {
       f = m(f, f), --c;
     } else {
-      for (var r = c - k + 1;0 == p(a, r);) {
-        r++;
+      for (var u = c - k + 1;0 == q(a, u);) {
+        u++;
       }
-      var t = 0;
-      for (d = r;d <= c;d++) {
-        t += p(a, d) << d - r, f = m(f, f);
+      var v = 0;
+      for (d = u;d <= c;d++) {
+        v += q(a, d) << d - u, f = m(f, f);
       }
-      f = m(f, l[t]);
-      c = r - 1;
+      f = m(f, l[v]);
+      c = u - 1;
     }
   }
   return m(f, 1);
@@ -1583,8 +1457,9 @@ sjcl.bn.prototype = {radix:24, maxMul:8, _class:sjcl.bn, copy:function() {
   for (b = 0;b < g || 0 !== a && -1 !== a;b++) {
     a = (f[b] || 0) + a, e = f[b] = a & h, a = (a - e) * d;
   }
-  -1 === a && (f[b - 1] -= c);
-  this.trim();
+  for (-1 === a && (f[b - 1] -= c);0 < f.length && 0 === f[f.length - 1];) {
+    f.pop();
+  }
   return this;
 }, cnormalize:function() {
   var a = 0, b, c = this.ipv, d, e = this.limbs, f = e.length, g = this.radixMask;
@@ -1639,12 +1514,12 @@ sjcl.bn.pseudoMersennePrime = function(a, b) {
   d._class = c;
   d.modulus.cnormalize();
   d.reduce = function() {
-    var a, b, c, d = this.modOffset, e = this.limbs, f = this.offset, p = this.offset.length, r = this.factor, t;
+    var a, b, c, d = this.modOffset, e = this.limbs, f = this.offset, q = this.offset.length, u = this.factor, v;
     for (a = this.minOffset;e.length > d;) {
       c = e.pop();
-      t = e.length;
-      for (b = 0;b < p;b++) {
-        e[t + f[b]] -= r[b] * c;
+      v = e.length;
+      for (b = 0;b < q;b++) {
+        e[v + f[b]] -= u[b] * c;
       }
       a--;
       a || (e.push(0), this.cnormalize(), a = this.minOffset);
@@ -1822,43 +1697,10 @@ sjcl.ecc.curves = {c192:new sjcl.ecc.curve(sjcl.bn.prime.p192, "0xffffffffffffff
 -3, "0xb3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d2a85c8edd3ec2aef", "0xaa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a385502f25dbf55296c3a545e3872760ab7", "0x3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d7a431d7c90ea0e5f"), c521:new sjcl.ecc.curve(sjcl.bn.prime.p521, "0x1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA51868783BF2F966B7FCC0148F709A5D03BB5C9B8899C47AEBB6FB71E91386409", -3, "0x051953EB9618E1C9A1F929A21A0B68540EEA2DA725B99B315F3B8B489918EF109E156193951EC7E937B1652C0BD3BB1BF073573DF883D2C34F1EF451FD46B503F00", 
 "0xC6858E06B70404E9CD9E3ECB662395B4429C648139053FB521F828AF606B4D3DBAA14B5E77EFE75928FE1DC127A2FFA8DE3348B3C1856A429BF97E7E31C2E5BD66", "0x11839296A789A3BC0045C8A5FB42C7D1BD998F54449579B446817AFBD17273E662C97EE72995EF42640C550B9013FAD0761353C7086A272C24088BE94769FD16650"), k192:new sjcl.ecc.curve(sjcl.bn.prime.p192k, "0xfffffffffffffffffffffffe26f2fc170f69466a74defd8d", 0, 3, "0xdb4ff10ec057e9ae26b07d0280b7f4341da5d1b1eae06c7d", "0x9b2f2f6d9c5628a7844163d015be86344082aa88d95e2f9d"), k224:new sjcl.ecc.curve(sjcl.bn.prime.p224k, 
 "0x010000000000000000000000000001dce8d2ec6184caf0a971769fb1f7", 0, 5, "0xa1455b334df099df30fc28a169a467e9e47075a90f7e650eb6b7a45c", "0x7e089fed7fba344282cafbd6f7e319f7c0b0bd59e2ca4bdb556d61a5"), k256:new sjcl.ecc.curve(sjcl.bn.prime.p256k, "0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 0, 7, "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8")};
-sjcl.ecc.curveName = function(a) {
-  for (var b in sjcl.ecc.curves) {
-    if (sjcl.ecc.curves.hasOwnProperty(b) && sjcl.ecc.curves[b] === a) {
-      return b;
-    }
-  }
-  throw new sjcl.exception.invalid("no such curve");
-};
-sjcl.ecc.deserialize = function(a) {
-  if (!a || !a.curve || !sjcl.ecc.curves[a.curve]) {
-    throw new sjcl.exception.invalid("invalid serialization");
-  }
-  if (-1 === ["elGamal", "ecdsa"].indexOf(a.type)) {
-    throw new sjcl.exception.invalid("invalid type");
-  }
-  var b = sjcl.ecc.curves[a.curve];
-  if (a.secretKey) {
-    if (!a.exponent) {
-      throw new sjcl.exception.invalid("invalid exponent");
-    }
-    var c = new sjcl.bn(a.exponent);
-    return new sjcl.ecc[a.type].secretKey(b, c);
-  }
-  if (!a.point) {
-    throw new sjcl.exception.invalid("invalid point");
-  }
-  c = b.fromBits(sjcl.codec.hex.toBits(a.point));
-  return new sjcl.ecc[a.type].publicKey(b, c);
-};
 sjcl.ecc.basicKey = {publicKey:function(a, b) {
   this._curve = a;
   this._curveBitLength = a.r.bitLength();
   this._point = b instanceof Array ? a.fromBits(b) : b;
-  this.serialize = function() {
-    var b = sjcl.ecc.curveName(a);
-    return {type:this.getType(), secretKey:!1, point:sjcl.codec.hex.fromBits(this._point.toBits()), curve:b};
-  };
   this.get = function() {
     var a = this._point.toBits(), b = sjcl.bitArray.bitLength(a), e = sjcl.bitArray.bitSlice(a, 0, b / 2), a = sjcl.bitArray.bitSlice(a, b / 2);
     return {x:e, y:a};
@@ -1867,10 +1709,6 @@ sjcl.ecc.basicKey = {publicKey:function(a, b) {
   this._curve = a;
   this._curveBitLength = a.r.bitLength();
   this._exponent = b;
-  this.serialize = function() {
-    var b = this.get(), d = sjcl.ecc.curveName(a);
-    return {type:this.getType(), secretKey:!0, exponent:sjcl.codec.hex.fromBits(b), curve:d};
-  };
   this.get = function() {
     return this._exponent.toBits();
   };
@@ -1895,8 +1733,6 @@ sjcl.ecc.elGamal.publicKey.prototype = {kem:function(a) {
   a = sjcl.bn.random(this._curve.r, a);
   var b = this._curve.G.mult(a).toBits();
   return {key:sjcl.hash.sha256.hash(this._point.mult(a).toBits()), tag:b};
-}, getType:function() {
-  return "elGamal";
 }};
 sjcl.ecc.elGamal.secretKey.prototype = {unkem:function(a) {
   return sjcl.hash.sha256.hash(this._curve.fromBits(a).mult(this._exponent).toBits());
@@ -1904,8 +1740,6 @@ sjcl.ecc.elGamal.secretKey.prototype = {unkem:function(a) {
   return sjcl.hash.sha256.hash(a._point.mult(this._exponent).toBits());
 }, dhJavaEc:function(a) {
   return a._point.mult(this._exponent).x.toBits();
-}, getType:function() {
-  return "elGamal";
 }};
 sjcl.ecc.ecdsa = {generateKeys:sjcl.ecc.basicKey.generateKeys("ecdsa")};
 sjcl.ecc.ecdsa.publicKey = function(a, b) {
@@ -1921,8 +1755,6 @@ sjcl.ecc.ecdsa.publicKey.prototype = {verify:function(a, b, c) {
     throw new sjcl.exception.corrupt("signature didn't check out");
   }
   return !0;
-}, getType:function() {
-  return "ecdsa";
 }};
 sjcl.ecc.ecdsa.secretKey = function(a, b) {
   sjcl.ecc.basicKey.secretKey.apply(this, arguments);
@@ -1935,8 +1767,6 @@ sjcl.ecc.ecdsa.secretKey.prototype = {sign:function(a, b, c, d) {
   a = sjcl.bn.fromBits(a).add(b.mul(this._exponent));
   c = c ? a.inverseMod(e).mul(d).mod(e) : a.mul(d.inverseMod(e)).mod(e);
   return sjcl.bitArray.concat(b.toBits(f), c.toBits(f));
-}, getType:function() {
-  return "ecdsa";
 }};
 sjcl.keyexchange.srp = {makeVerifier:function(a, b, c, d) {
   a = sjcl.keyexchange.srp.makeX(a, b, c);
@@ -2029,7 +1859,7 @@ sjcl.arrayBuffer.ccm = {mode:"ccm", defaults:{tlen:128}, compat_encrypt:function
   var g, h, k, m, l;
   g = sjcl.bitArray;
   h = g._xor4;
-  var n = b.byteLength / 50, p = n;
+  var n = b.byteLength / 50, q = n;
   new DataView(new ArrayBuffer(16));
   c = g.concat([g.partial(8, f - 1)], c).concat([0, 0, 0]).slice(0, 4);
   d = g.bitSlice(h(d, a.encrypt(c)), 0, 8 * e);
@@ -2037,7 +1867,7 @@ sjcl.arrayBuffer.ccm = {mode:"ccm", defaults:{tlen:128}, compat_encrypt:function
   0 === c[3] && c[2]++;
   if (0 !== b.byteLength) {
     for (e = new DataView(b), l = 0;l < e.byteLength;l += 16) {
-      l > n && (sjcl.mode.ccm._callProgressListener(l / b.byteLength), n += p), m = a.encrypt(c), g = e.getUint32(l), h = e.getUint32(l + 4), f = e.getUint32(l + 8), k = e.getUint32(l + 12), e.setUint32(l, g ^ m[0]), e.setUint32(l + 4, h ^ m[1]), e.setUint32(l + 8, f ^ m[2]), e.setUint32(l + 12, k ^ m[3]), c[3]++, 0 === c[3] && c[2]++;
+      l > n && (sjcl.mode.ccm._callProgressListener(l / b.byteLength), n += q), m = a.encrypt(c), g = e.getUint32(l), h = e.getUint32(l + 4), f = e.getUint32(l + 8), k = e.getUint32(l + 12), e.setUint32(l, g ^ m[0]), e.setUint32(l + 4, h ^ m[1]), e.setUint32(l + 8, f ^ m[2]), e.setUint32(l + 12, k ^ m[3]), c[3]++, 0 === c[3] && c[2]++;
     }
   }
   return d;
@@ -2112,27 +1942,27 @@ sjcl.codec.arrayBuffer = {fromBits:function(a, b, c) {
     return (a & 255) << 24 | (a & 65280) << 8 | (a & 16711680) >>> 8 | (a & -16777216) >>> 24;
   }
   function c(b) {
-    for (var c = this._h[0], d = this._h[1], g = this._h[2], h = this._h[3], x = this._h[4], y = this._h[0], B = this._h[1], z = this._h[2], u = this._h[3], v = this._h[4], q = 0, w;16 > q;++q) {
-      w = a(c + (d ^ g ^ h) + b[k[q]] + e[q], l[q]) + x, c = x, x = h, h = a(g, 10), g = d, d = w, w = a(y + (B ^ (z | ~u)) + b[m[q]] + f[q], n[q]) + v, y = v, v = u, u = a(z, 10), z = B, B = w;
+    for (var c = this._h[0], d = this._h[1], g = this._h[2], h = this._h[3], w = this._h[4], A = this._h[0], x = this._h[1], B = this._h[2], y = this._h[3], r = this._h[4], p = 0, t;16 > p;++p) {
+      t = a(c + (d ^ g ^ h) + b[k[p]] + e[p], l[p]) + w, c = w, w = h, h = a(g, 10), g = d, d = t, t = a(A + (x ^ (B | ~y)) + b[m[p]] + f[p], n[p]) + r, A = r, r = y, y = a(B, 10), B = x, x = t;
     }
-    for (;32 > q;++q) {
-      w = a(c + (d & g | ~d & h) + b[k[q]] + e[q], l[q]) + x, c = x, x = h, h = a(g, 10), g = d, d = w, w = a(y + (B & u | z & ~u) + b[m[q]] + f[q], n[q]) + v, y = v, v = u, u = a(z, 10), z = B, B = w;
+    for (;32 > p;++p) {
+      t = a(c + (d & g | ~d & h) + b[k[p]] + e[p], l[p]) + w, c = w, w = h, h = a(g, 10), g = d, d = t, t = a(A + (x & y | B & ~y) + b[m[p]] + f[p], n[p]) + r, A = r, r = y, y = a(B, 10), B = x, x = t;
     }
-    for (;48 > q;++q) {
-      w = a(c + ((d | ~g) ^ h) + b[k[q]] + e[q], l[q]) + x, c = x, x = h, h = a(g, 10), g = d, d = w, w = a(y + ((B | ~z) ^ u) + b[m[q]] + f[q], n[q]) + v, y = v, v = u, u = a(z, 10), z = B, B = w;
+    for (;48 > p;++p) {
+      t = a(c + ((d | ~g) ^ h) + b[k[p]] + e[p], l[p]) + w, c = w, w = h, h = a(g, 10), g = d, d = t, t = a(A + ((x | ~B) ^ y) + b[m[p]] + f[p], n[p]) + r, A = r, r = y, y = a(B, 10), B = x, x = t;
     }
-    for (;64 > q;++q) {
-      w = a(c + (d & h | g & ~h) + b[k[q]] + e[q], l[q]) + x, c = x, x = h, h = a(g, 10), g = d, d = w, w = a(y + (B & z | ~B & u) + b[m[q]] + f[q], n[q]) + v, y = v, v = u, u = a(z, 10), z = B, B = w;
+    for (;64 > p;++p) {
+      t = a(c + (d & h | g & ~h) + b[k[p]] + e[p], l[p]) + w, c = w, w = h, h = a(g, 10), g = d, d = t, t = a(A + (x & B | ~x & y) + b[m[p]] + f[p], n[p]) + r, A = r, r = y, y = a(B, 10), B = x, x = t;
     }
-    for (;80 > q;++q) {
-      w = a(c + (d ^ (g | ~h)) + b[k[q]] + e[q], l[q]) + x, c = x, x = h, h = a(g, 10), g = d, d = w, w = a(y + (B ^ z ^ u) + b[m[q]] + f[q], n[q]) + v, y = v, v = u, u = a(z, 10), z = B, B = w;
+    for (;80 > p;++p) {
+      t = a(c + (d ^ (g | ~h)) + b[k[p]] + e[p], l[p]) + w, c = w, w = h, h = a(g, 10), g = d, d = t, t = a(A + (x ^ B ^ y) + b[m[p]] + f[p], n[p]) + r, A = r, r = y, y = a(B, 10), B = x, x = t;
     }
-    w = this._h[1] + g + u;
-    this._h[1] = this._h[2] + h + v;
-    this._h[2] = this._h[3] + x + y;
-    this._h[3] = this._h[4] + c + B;
-    this._h[4] = this._h[0] + d + z;
-    this._h[0] = w;
+    t = this._h[1] + g + y;
+    this._h[1] = this._h[2] + h + r;
+    this._h[2] = this._h[3] + w + A;
+    this._h[3] = this._h[4] + c + x;
+    this._h[4] = this._h[0] + d + B;
+    this._h[0] = t;
   }
   sjcl.hash.ripemd160 = function(a) {
     a ? (this._h = a._h.slice(0), this._buffer = a._buffer.slice(0), this._length = a._length) : this.reset();
