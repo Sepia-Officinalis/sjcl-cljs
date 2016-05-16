@@ -13,7 +13,7 @@ To use this in your git project, first set up [jitpack.io](https://jitpack.io/) 
 Then add to your dependencies:
 
 ```
-:dependencies [[com.github.xcthulhu/sjcl-cljs "0.1.0"]]
+:dependencies [[com.github.xcthulhu/sjcl-cljs "0.1.9"]]
 ```
 
 ## Usage
