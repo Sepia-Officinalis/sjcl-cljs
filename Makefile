@@ -6,7 +6,7 @@ src/sjcl/%.js: build/%.js
 	cp $< $@
 
 # TODO: Make sure tests pass, fail o/w
-build/sjcl.js: build/sjcl/core.js build/closure.jar
+build/sjcl.js: build/sjcl/core_closure.js build/closure.jar
 	java -jar build/closure.jar \
              --compilation_level=SIMPLE_OPTIMIZATIONS \
 	     --formatting=pretty_print \
@@ -31,7 +31,7 @@ build/sjcl:
 	[ -d $@ ] || git clone https://github.com/bitwiseshiftleft/sjcl.git $@
 	touch $@
 
-build/sjcl/core.js: build/sjcl
+build/sjcl/core_closure.js: build/sjcl
 	(cd $< ; ./configure --with-all)
 	make -C $< $(notdir $@) core_closure.js
 	touch $@
