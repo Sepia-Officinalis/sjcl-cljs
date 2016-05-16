@@ -1,4 +1,4 @@
-(defproject sjcl-cljs "0.1.8"
+(defproject sjcl-cljs "0.1.9"
   :description "ClojureScript wrapper around the Stanford Javascript Crypto Library"
   :url "https://github.com/xcthulhu/sjcl-cljs"
   :license {:name "GPL2"

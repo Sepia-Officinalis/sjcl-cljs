@@ -114,7 +114,7 @@ sjcl.bitArray = {
      * Make a partial word for a bit array.
      * @param {Number} len The number of bits in the word.
      * @param {Number} x The bits.
-     * @param {Number} [0] _end Pass 1 if x has already been shifted to the high side.
+     * @param {Number} [_end=0] Pass 1 if x has already been shifted to the high side.
      * @return {Number} The partial word.
      */
     partial: function(len, x, _end) {},
