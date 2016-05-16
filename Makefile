@@ -1,4 +1,4 @@
-CLOSURE_VERSION=v20160315
+CLOSURE_VERSION=20160315
 
 all: src/sjcl/sjcl.js src/sjcl/sjcl.min.js
 
@@ -29,7 +29,6 @@ build/sjcl.min.js: build/sjcl.js build/closure.jar
 build/sjcl:
 	mkdir -p build
 	[ -d $@ ] || git clone https://github.com/bitwiseshiftleft/sjcl.git $@
-	(cd $@ ; git checkout acba6e4c64f8f69d1db2ed47fb68622d4322c0da)
 	touch $@
 
 build/sjcl/core.js: build/sjcl
@@ -37,20 +36,20 @@ build/sjcl/core.js: build/sjcl
 	make -C $< $(notdir $@) core_closure.js
 	touch $@
 
-build/closure-compiler-maven-release-$(CLOSURE_VERSION):
+build/closure-compiler-$(CLOSURE_VERSION):
 	mkdir -p build
-	[ -d $@ ] || (cd $(dir $@) ; curl https://codeload.github.com/google/closure-compiler/tar.gz/maven-release-$(CLOSURE_VERSION) | tar zxv)
+	[ -d $@ ] || (cd $(dir $@) ; curl https://codeload.github.com/google/closure-compiler/tar.gz/v$(CLOSURE_VERSION) | tar zxv)
 	touch $@
 
-build/closure: build/closure-compiler-maven-release-$(CLOSURE_VERSION)
+build/closure: build/closure-compiler-$(CLOSURE_VERSION)
 	rm -f $@
 	(cd $(dir $<) ; ln -s $(notdir $<) $(notdir $@))
 
-build/closure/target/closure-compiler-$(CLOSURE_VERSION).jar: build/closure
+build/closure/target/closure-compiler-1.0-SNAPSHOT.jar: build/closure
 	[ -f $@ ] || (cd $< ; mvn -DskipTests package)
 	touch $@
 
-build/closure.jar: build/closure/target/closure-compiler-$(CLOSURE_VERSION).jar
+build/closure.jar: build/closure/target/closure-compiler-1.0-SNAPSHOT.jar
 	rm -f $@
 	(cd $(dir $@) ; ln -s closure/target/$(notdir $<) $(notdir $@))
 
